@@ -15,7 +15,6 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost", cast=Csv())
 
 # ─── Applications ──────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
-    "cs-backend-hjkw.onrender.com",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
