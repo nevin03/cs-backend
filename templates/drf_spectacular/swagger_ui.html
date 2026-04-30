@@ -1,0 +1,89 @@
+{% extends "drf_spectacular/swagger_ui.html" %}
+
+{% block extra_head %}
+<style>
+  /* ── Branded top bar ─────────────────────────────────────── */
+  .swagger-ui .topbar {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+    padding: 12px 24px;
+  }
+  .swagger-ui .topbar .topbar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .swagger-ui .topbar .topbar-wrapper::before {
+    content: "📦 Portfolio API";
+    color: #e0e0e0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .swagger-ui .topbar .topbar-wrapper a img {
+    display: none;   /* hide default Swagger logo */
+  }
+  .swagger-ui .topbar .topbar-wrapper a span {
+    display: none;
+  }
+
+  /* ── Info block ──────────────────────────────────────────── */
+  .swagger-ui .info {
+    margin: 24px 0 8px;
+  }
+  .swagger-ui .info .title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1a1a2e;
+  }
+  .swagger-ui .info .title small.version-stamp {
+    background: #0f3460;
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    vertical-align: middle;
+    margin-left: 8px;
+  }
+
+  /* ── Tag section headers ─────────────────────────────────── */
+  .swagger-ui .opblock-tag {
+    border-bottom: 2px solid #0f3460;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+
+  /* ── Method colour tweaks ────────────────────────────────── */
+  .swagger-ui .opblock.opblock-get .opblock-summary-method {
+    background: #0f3460;
+  }
+  .swagger-ui .opblock.opblock-post .opblock-summary-method {
+    background: #1a6b3c;
+  }
+
+  /* ── Try it out button ───────────────────────────────────── */
+  .swagger-ui .btn.try-out__btn {
+    border-color: #0f3460;
+    color: #0f3460;
+  }
+  .swagger-ui .btn.try-out__btn:hover {
+    background: #0f3460;
+    color: #fff;
+  }
+  .swagger-ui .btn.execute {
+    background: #0f3460;
+    border-color: #0f3460;
+  }
+
+  /* ── Models section ──────────────────────────────────────── */
+  .swagger-ui section.models {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+  }
+  .swagger-ui section.models h4 {
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+</style>
+{% endblock %}
