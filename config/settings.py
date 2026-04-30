@@ -13,6 +13,15 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=False, cast=bool)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost", cast=Csv())
 
+# Add Render/Railway external hostnames if they exist
+RENDER_EXTERNAL_HOSTNAME = config("RENDER_EXTERNAL_HOSTNAME", default=None)
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+RAILWAY_STATIC_URL = config("RAILWAY_STATIC_URL", default=None)
+if RAILWAY_STATIC_URL:
+    ALLOWED_HOSTS.append(RAILWAY_STATIC_URL)
+
 # ─── Applications ──────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
     "django.contrib.admin",
