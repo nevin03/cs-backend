@@ -40,6 +40,9 @@ urlpatterns = [
     # ── API v1 ─────────────────────────────────────────────────────────────
     path("api/v1/", include("config.api_urls")),
 
+    # ── Chatbot API ────────────────────────────────────────────────────────
+    path("api/chat/", include("chatbot.urls")),
+
     # ── OpenAPI schema (raw) ───────────────────────────────────────────────
     # GET /api/schema/         → returns OpenAPI 3.0 JSON
     # GET /api/schema/?format=yaml → returns YAML

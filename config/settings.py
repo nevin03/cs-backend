@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "apps.contact",
     "apps.seo",
     "apps.clients",
+    "chatbot",
 ]
 
 # ─── Middleware ────────────────────────────────────────────────────────────────
@@ -211,6 +212,7 @@ SPECTACULAR_SETTINGS = {
         {"name": "Contact",  "description": "Contact form submissions (POST only)."},
         {"name": "SEO",      "description": "Per-page SEO metadata (meta tags, OG, canonical)."},
         {"name": "Clients",  "description": "Client logos/icons for sliders."},
+        {"name": "Chatbot",  "description": "Lead generation chatbot flow."},
     ],
     # Swagger UI behaviour
     "SWAGGER_UI_SETTINGS": {
