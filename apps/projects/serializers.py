@@ -1,5 +1,17 @@
 from rest_framework import serializers
-from .models import FeaturedProject, ProjectImage
+from .models import FeaturedProject, ProjectImage, ProjectLink, ProjectTag
+
+
+class ProjectTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectTag
+        fields = ["id", "name"]
+
+
+class ProjectLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectLink
+        fields = ["id", "label", "url", "order"]
 
 
 class ProjectImageSerializer(serializers.ModelSerializer):
@@ -17,20 +29,27 @@ class ProjectImageSerializer(serializers.ModelSerializer):
 
 
 class FeaturedProjectSerializer(serializers.ModelSerializer):
+    tags = ProjectTagSerializer(many=True, read_only=True)
     images = ProjectImageSerializer(many=True, read_only=True)
+    links = ProjectLinkSerializer(many=True, read_only=True)
     video = serializers.SerializerMethodField()
+    project_image_item = serializers.SerializerMethodField()
 
     class Meta:
         model = FeaturedProject
         fields = [
             "id",
             "title",
-            "tag",
+            "tags",
             "project_name",
             "slug",
             "description",
+            "project_image_item",
+            "industry",
+            "links",
             "images",
             "video",
+            "banner_video",
             "meta_title",
             "meta_description",
             "meta_keywords",
@@ -39,29 +58,46 @@ class FeaturedProjectSerializer(serializers.ModelSerializer):
         ]
 
     def get_video(self, obj):
-        request = self.context.get("request")
-        if obj.project_video and request:
-            return request.build_absolute_uri(obj.project_video.url)
-        return obj.project_video_url or None
+        if obj.banner_video:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(obj.banner_video.url)
+            return obj.banner_video.url
+        return None
+
+    def get_project_image_item(self, obj):
+        if obj.project_image_item:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(obj.project_image_item.url)
+            return obj.project_image_item.url
+        return None
 
 
 class FeaturedProjectListSerializer(serializers.ModelSerializer):
     """Lightweight serializer for list views — omits SEO fields."""
 
+    tags = ProjectTagSerializer(many=True, read_only=True)
     thumbnail = serializers.SerializerMethodField()
     video = serializers.SerializerMethodField()
+    project_image_item = serializers.SerializerMethodField()
+    links = ProjectLinkSerializer(many=True, read_only=True)
 
     class Meta:
         model = FeaturedProject
         fields = [
             "id",
             "title",
-            "tag",
+            "tags",
             "project_name",
             "slug",
             "description",
             "thumbnail",
             "video",
+            "project_image_item",
+            "industry",
+            "links",
+            "banner_video",
         ]
 
     def get_thumbnail(self, obj):
@@ -74,7 +110,17 @@ class FeaturedProjectListSerializer(serializers.ModelSerializer):
         return first_image.image.url
 
     def get_video(self, obj):
-        request = self.context.get("request")
-        if obj.project_video and request:
-            return request.build_absolute_uri(obj.project_video.url)
-        return obj.project_video_url or None
+        if obj.banner_video:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(obj.banner_video.url)
+            return obj.banner_video.url
+        return None
+
+    def get_project_image_item(self, obj):
+        if obj.project_image_item:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(obj.project_image_item.url)
+            return obj.project_image_item.url
+        return None

@@ -1,8 +1,15 @@
 from django.db import models
+from django.core.exceptions import ValidationError
+
+
+def validate_word_count(value):
+    words = value.split()
+    if len(words) > 25:
+        raise ValidationError(f"Description must be at most 25 words. Currently: {len(words)} words.")
 
 
 class ClientFeedback(models.Model):
-    client_image = models.ImageField(
+    image = models.ImageField(
         upload_to="feedback/avatars/",
         blank=True,
         null=True,
@@ -10,7 +17,11 @@ class ClientFeedback(models.Model):
     )
     client_name = models.CharField(max_length=150)
     company_name = models.CharField(max_length=200)
-    description = models.TextField(help_text="Client testimonial / feedback text.")
+    description = models.TextField(
+        max_length=200,
+        validators=[validate_word_count],
+        help_text="Client testimonial / feedback text. Max 25 words and 200 characters."
+    )
     rating = models.PositiveSmallIntegerField(
         default=5,
         help_text="Star rating out of 5.",

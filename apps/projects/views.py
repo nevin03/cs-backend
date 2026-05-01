@@ -27,21 +27,24 @@ PROJECT_LIST_EXAMPLE = OpenApiExample(
             {
                 "id": 1,
                 "title": "E-Commerce Platform",
-                "tag": "Web Development",
+                "tags": [{"id": 1, "name": "Web Development", "slug": "web-development"}],
                 "project_name": "ShopKerala",
                 "slug": "shopkerala",
                 "description": "A full-featured e-commerce platform built for a retailer in Kochi.",
                 "thumbnail": "https://example.com/media/projects/images/shopkerala.jpg",
+                "project_image_item": "https://example.com/media/projects/banners/shopkerala.jpg",
+                "banner_video": None,
                 "video": None,
             },
             {
                 "id": 2,
                 "title": "Restaurant App",
-                "tag": "Mobile App",
+                "tags": [{"id": 2, "name": "Mobile App", "slug": "mobile-app"}],
                 "project_name": "WayanadEats",
                 "slug": "wayanadeats",
                 "description": "Food ordering app for a restaurant chain in Wayanad.",
                 "thumbnail": "https://example.com/media/projects/images/wayanadeats.jpg",
+                "banner_video": "https://example.com/media/projects/videos/wayanadeats.mp4",
                 "video": "https://example.com/media/projects/videos/wayanadeats.mp4",
             },
         ],
@@ -56,10 +59,12 @@ PROJECT_DETAIL_EXAMPLE = OpenApiExample(
     value={
         "id": 1,
         "title": "E-Commerce Platform",
-        "tag": "Web Development",
+        "tags": [{"id": 1, "name": "Web Development", "slug": "web-development"}],
         "project_name": "ShopKerala",
         "slug": "shopkerala",
         "description": "A full-featured e-commerce platform for a Kochi retailer.",
+        "project_image_item": "https://example.com/media/projects/banners/shopkerala.jpg",
+        "banner_video": "https://example.com/media/projects/videos/shopkerala.mp4",
         "images": [
             {"id": 1, "image_url": "https://example.com/media/img1.jpg", "alt_text": "Homepage", "order": 0},
             {"id": 2, "image_url": "https://example.com/media/img2.jpg", "alt_text": "Product page", "order": 1},
@@ -118,7 +123,7 @@ TAGS_EXAMPLE = OpenApiExample(
         operation_id="projects_detail",
         summary="Get project detail",
         description=(
-            "Returns full project data including all images (up to 4) and video.\n\n"
+            "Returns full project data including project_image_items (up to 4) and video.\n\n"
             "Look up by **slug** — e.g. `/api/v1/projects/shopkerala/`"
         ),
         tags=["Projects"],
@@ -145,7 +150,7 @@ class FeaturedProjectViewSet(
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = FeaturedProjectFilter
-    search_fields = ["title", "project_name", "tag", "description"]
+    search_fields = ["title", "project_name", "tags__name", "description"]
     ordering_fields = ["order", "created_at"]
     ordering = ["order"]
     lookup_field = "slug"
@@ -175,10 +180,6 @@ class FeaturedProjectViewSet(
     )
     @action(detail=False, methods=["get"], url_path="tags")
     def tags(self, request):
-        tags = (
-            FeaturedProject.objects.filter(is_active=True)
-            .values_list("tag", flat=True)
-            .distinct()
-            .order_by("tag")
-        )
+        from .models import ProjectTag
+        tags = ProjectTag.objects.filter(project__is_active=True).distinct().values_list("name", flat=True).order_by("name")
         return Response(list(tags))

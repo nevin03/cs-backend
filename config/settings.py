@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "apps.pricing",
     "apps.contact",
     "apps.seo",
+    "apps.clients",
 ]
 
 # ─── Middleware ────────────────────────────────────────────────────────────────
@@ -209,6 +210,7 @@ SPECTACULAR_SETTINGS = {
         {"name": "Pricing",  "description": "Pricing packages and feature lists."},
         {"name": "Contact",  "description": "Contact form submissions (POST only)."},
         {"name": "SEO",      "description": "Per-page SEO metadata (meta tags, OG, canonical)."},
+        {"name": "Clients",  "description": "Client logos/icons for sliders."},
     ],
     # Swagger UI behaviour
     "SWAGGER_UI_SETTINGS": {

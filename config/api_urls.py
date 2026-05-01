@@ -12,6 +12,7 @@ from apps.feedback.views import ClientFeedbackViewSet
 from apps.pricing.views import PricingPackageViewSet
 from apps.contact.views import ContactSubmissionViewSet
 from apps.seo.views import SEOPageViewSet
+from apps.clients.views import ClientLogoViewSet
 
 router = DefaultRouter()
 router.register(r"home-video",      HomeVideoViewSet,          basename="home-video")
@@ -20,6 +21,7 @@ router.register(r"feedback",        ClientFeedbackViewSet,     basename="feedbac
 router.register(r"pricing",         PricingPackageViewSet,     basename="pricing")
 router.register(r"contact",         ContactSubmissionViewSet,  basename="contact")
 router.register(r"seo",             SEOPageViewSet,            basename="seo")
+router.register(r"clients",         ClientLogoViewSet,         basename="clients")
 
 urlpatterns = [
     path("", include(router.urls)),

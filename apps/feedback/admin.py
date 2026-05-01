@@ -12,9 +12,9 @@ class ClientFeedbackAdmin(admin.ModelAdmin):
     readonly_fields = ["avatar_preview", "created_at"]
 
     def avatar_preview(self, obj):
-        if obj.client_image:
+        if obj.image:
             return format_html(
-                '<img src="{}" style="height:40px;width:40px;border-radius:50%;" />', obj.client_image.url
+                '<img src="{}" style="height:40px;width:40px;border-radius:50%;" />', obj.image.url
             )
         return "—"
     avatar_preview.short_description = "Photo"

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.core.exceptions import ValidationError
-from .models import FeaturedProject, ProjectImage
+from .models import FeaturedProject, ProjectImage, ProjectLink, ProjectTag
 
 
 class ProjectImageInline(admin.TabularInline):
@@ -27,25 +27,36 @@ class ProjectImageInline(admin.TabularInline):
             raise ValidationError("A project can have at most 4 images.")
 
 
+class ProjectLinkInline(admin.TabularInline):
+    model = ProjectLink
+    extra = 1
+    fields = ["label", "url", "order"]
+
+
+class ProjectTagInline(admin.TabularInline):
+    model = ProjectTag
+    extra = 1
+
+
 @admin.register(FeaturedProject)
 class FeaturedProjectAdmin(admin.ModelAdmin):
     list_display = [
-        "project_name", "tag", "is_active", "order", "image_count", "updated_at"
+        "project_name", "get_tags", "is_active", "order", "image_count", "updated_at"
     ]
-    list_filter = ["is_active", "tag"]
-    search_fields = ["title", "project_name", "tag"]
+    list_filter = ["is_active"]
+    search_fields = ["title", "project_name", "tags__name"]
     prepopulated_fields = {"slug": ("project_name",)}
     readonly_fields = ["created_at", "updated_at"]
-    inlines = [ProjectImageInline]
+    inlines = [ProjectTagInline, ProjectImageInline, ProjectLinkInline]
     list_editable = ["order", "is_active"]
 
     fieldsets = (
         ("Content", {
-            "fields": ("title", "tag", "project_name", "slug", "description")
+            "fields": ("title", "project_name", "slug", "description", "industry")
         }),
         ("Media", {
-            "fields": ("project_video", "project_video_url"),
-            "description": "Upload a video file OR provide an external URL. Max 4 images via the section below.",
+            "fields": ("project_image_item", "banner_video"),
+            "description": "Upload a banner image and/or a banner video. Max 4 additional gallery images can be added below.",
         }),
         ("SEO", {
             "fields": ("meta_title", "meta_description", "meta_keywords"),
@@ -65,3 +76,7 @@ class FeaturedProjectAdmin(admin.ModelAdmin):
         color = "green" if count <= 4 else "red"
         return format_html('<span style="color:{}">{}/4</span>', color, count)
     image_count.short_description = "Images"
+
+    def get_tags(self, obj):
+        return ", ".join([t.name for t in obj.tags.all()])
+    get_tags.short_description = "Tags"

@@ -3,6 +3,26 @@ from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 
 
+class ProjectTag(models.Model):
+    """
+    Tags attached to a FeaturedProject.
+    """
+    project = models.ForeignKey(
+        "FeaturedProject",
+        on_delete=models.CASCADE,
+        related_name="tags",
+    )
+    name = models.CharField(max_length=50)
+
+    class Meta:
+        verbose_name = "Project Tag"
+        verbose_name_plural = "Project Tags"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
 class FeaturedProject(models.Model):
     """
     A featured project shown in the portfolio section.
@@ -10,27 +30,24 @@ class FeaturedProject(models.Model):
     """
 
     title = models.CharField(max_length=200)
-    tag = models.CharField(
-        max_length=100,
-        help_text="Category tag, e.g. 'Web Development', 'Mobile App'.",
-        db_index=True,
-    )
+    # tags is now a related manager via ProjectTag
     project_name = models.CharField(max_length=200)
     description = models.TextField()
     slug = models.SlugField(max_length=220, unique=True, blank=True)
-
-    # Video (optional)
-    project_video = models.FileField(
+    project_image_item = models.ImageField(
+        upload_to="projects/banners/",
+        blank=True,
+        null=True,
+        help_text="Banner image for the project.",
+    )
+    banner_video = models.FileField(
         upload_to="projects/videos/",
         blank=True,
         null=True,
-        help_text="Upload a single project video (MP4 recommended).",
+        help_text="Banner video for the project.",
     )
-    project_video_url = models.URLField(
-        max_length=500,
-        blank=True,
-        help_text="External video URL (YouTube/Vimeo embed). Used if no file is uploaded.",
-    )
+    industry = models.CharField(max_length=100, blank=True, null=True)
+
 
     # SEO
     meta_title = models.CharField(max_length=70, blank=True)
@@ -67,10 +84,8 @@ class FeaturedProject(models.Model):
 
     @property
     def video(self):
-        """Returns the best available video source."""
-        if self.project_video:
-            return self.project_video.url
-        return self.project_video_url or None
+        """Returns the banner_video URL."""
+        return self.banner_video.url if self.banner_video else None
 
 
 class ProjectImage(models.Model):
@@ -104,3 +119,26 @@ class ProjectImage(models.Model):
                 raise ValidationError(
                     "A project can have at most 4 images. Remove an existing image first."
                 )
+
+
+class ProjectLink(models.Model):
+    """
+    External links for a FeaturedProject (e.g. Website, App Store, Play Store).
+    """
+
+    project = models.ForeignKey(
+        FeaturedProject,
+        on_delete=models.CASCADE,
+        related_name="links",
+    )
+    label = models.CharField(max_length=100, help_text="Link label, e.g. 'Website', 'App Store'.")
+    url = models.URLField(max_length=500)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order"]
+        verbose_name = "Project Link"
+        verbose_name_plural = "Project Links"
+
+    def __str__(self):
+        return f"{self.label} for {self.project.project_name}"

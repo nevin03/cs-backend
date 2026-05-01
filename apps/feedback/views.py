@@ -15,7 +15,7 @@ FEEDBACK_LIST_EXAMPLE = OpenApiExample(
         "results": [
             {
                 "id": 1,
-                "client_image_url": "https://example.com/media/feedback/arun.jpg",
+                "image_url": "https://example.com/media/feedback/arun.jpg",
                 "client_name": "Arun Menon",
                 "company_name": "TechStart Kochi",
                 "description": "Outstanding work! Delivered our web platform ahead of schedule and within budget.",
@@ -23,7 +23,7 @@ FEEDBACK_LIST_EXAMPLE = OpenApiExample(
             },
             {
                 "id": 2,
-                "client_image_url": None,
+                "image_url": None,
                 "client_name": "Divya Krishnan",
                 "company_name": "WayanadEats",
                 "description": "The mobile app they built for us has transformed our business. Highly recommend!",
@@ -36,13 +36,19 @@ FEEDBACK_LIST_EXAMPLE = OpenApiExample(
 )
 
 
+from rest_framework.pagination import PageNumberPagination
+
+class FeedbackPagination(PageNumberPagination):
+    page_size = 25
+
+
 @extend_schema_view(
     list=extend_schema(
         operation_id="feedback_list",
         summary="List client testimonials",
         description=(
             "Returns a paginated list of active client testimonials.\n\n"
-            "`client_image_url` will be `null` if no photo was uploaded for that client."
+            "`image_url` will be `null` if no photo was uploaded for that client."
         ),
         tags=["Feedback"],
         responses={
@@ -58,6 +64,7 @@ class ClientFeedbackViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """GET /api/v1/feedback/ — paginated list of active testimonials."""
 
     serializer_class = ClientFeedbackSerializer
+    pagination_class = FeedbackPagination
 
     def get_queryset(self):
         return ClientFeedback.objects.filter(is_active=True)
